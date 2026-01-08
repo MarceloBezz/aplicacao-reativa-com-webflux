@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class EventoController {
 
     @Autowired
-    private EventoRepository repository;
+    private EventoService service;
     
     @GetMapping(produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<Evento> obterTodos() {
-        return repository.findAll();
+    public Flux<EventoDTO> obterTodos() {
+        return service.obterTodos();
     }
     
 }
