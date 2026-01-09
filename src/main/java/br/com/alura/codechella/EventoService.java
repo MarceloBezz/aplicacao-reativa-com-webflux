@@ -27,4 +27,28 @@ public class EventoService {
                 .map(EventoDTO::toDto);
     }
 
+    public Mono<EventoDTO> cadastrar(EventoDTO dto) {
+        return repository
+                .save(dto.toEntity())
+                .map(EventoDTO::toDto);
+    }
+
+    public Mono<Void> excluir(Long id) {
+        return repository.findById(id).flatMap(repository::delete);
+    }
+
+    public Mono<EventoDTO> atualizar(Long id, EventoDTO dto) {
+        return repository
+                .findById(id)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "ID não encontrado!")))
+                .flatMap(evento -> {
+                    evento.setData(dto.data());
+                    evento.setDescricao(dto.descricao());
+                    evento.setNome(dto.nome());
+                    evento.setTipo(dto.tipo());
+                    return repository.save(evento);
+                })
+                .map(EventoDTO::toDto);
+    }
+
 }
