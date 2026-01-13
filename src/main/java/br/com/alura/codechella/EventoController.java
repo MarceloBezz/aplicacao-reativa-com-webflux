@@ -46,6 +46,11 @@ public class EventoController {
                 .delayElements(Duration.ofSeconds(4));
     }
 
+    @GetMapping("/{id}/traduzir/{idioma}")
+    public Mono<String> obterTraducao(@PathVariable Long id, @PathVariable String idioma) {
+        return service.obterTraducao(id, idioma);
+    }
+
     @PostMapping
     public Mono<EventoDTO> cadastrar(@RequestBody EventoDTO dto) {
         return service
