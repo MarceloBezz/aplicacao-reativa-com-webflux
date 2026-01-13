@@ -36,7 +36,7 @@ class CodechellaApplicationTests {
 	}
 
 	@Test
-	void buscaEventoPorId() {
+	void buscaEventos() {
 		EventoDTO dto = new EventoDTO(13L, TipoEvento.SHOW, "The Weeknd", LocalDate.parse("2025-11-02"),
 				"Um show eletrizante ao ar livre com muitos efeitos especiais.");
 
@@ -51,6 +51,46 @@ class CodechellaApplicationTests {
 					assertEquals(dto.nome(), eventoResponse.nome());
 					assertEquals(dto.data(), eventoResponse.data());
 					assertEquals(dto.descricao(), eventoResponse.descricao());
+				});
+	}
+
+	@Test
+	void excluirEvento() {
+		EventoDTO dto = new EventoDTO(30L, TipoEvento.SHOW, "The Weeknd", LocalDate.parse("2025-11-02"),
+				"Um show eletrizante ao ar livre com muitos efeitos especiais.");
+
+		webTestClient.post()
+				.uri("/eventos")
+				.bodyValue(dto)
+				.exchange();
+
+		webTestClient.delete()
+				.uri("/eventos/" + dto.id())
+				.exchange()
+				.expectStatus().isOk();
+
+		webTestClient.get()
+				.uri("/eventos/" + dto.id())
+				.exchange()
+				.expectStatus().isNotFound();
+	}
+
+	@Test
+	void atualizaEvento() {
+		EventoDTO dto = new EventoDTO(1L, TipoEvento.SHOW, "Novo Show!!!", LocalDate.parse("2025-11-02"),
+				"Surge um novo show");
+
+		webTestClient.put()
+				.uri("/eventos/" + dto.id())
+				.bodyValue(dto)
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(EventoDTO.class).value(response -> {
+					assertEquals(dto.id(), response.id());
+					assertEquals(dto.tipo(), response.tipo());
+					assertEquals(dto.nome(), response.nome());
+					assertEquals(dto.data(), response.data());
+					assertEquals(dto.descricao(), response.descricao());
 				});
 	}
 
